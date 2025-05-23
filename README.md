@@ -8,7 +8,7 @@
 ## 🚀 Features
 
 * 🔍 Accepts raw genetic variant input (e.g. chromosome, position, reference and alternate base).
-* 🧪 Queries Ensembl REST API to annotate variants with:
+* 🧪 Queries database to annotate variants with:
 
   * Affected gene
   * Mutation impact on protein
@@ -26,15 +26,13 @@
 
    * Example: `chr9:136149229 G>A`
 
-2. 🔗 The tool contacts the **Ensembl Variant Annotation API**
-
-3. 📊 Returns data like:
+2. 📊 Returns data like:
 
    * Which **gene** is affected (`CDKN2A`)
    * How the **protein** is changed (Arginine → Histidine)
    * Type of mutation (**missense variant** = protein is altered)
 
-4. 💡 **Displays an interpretation** like:
+3. 💡 **Displays an human readable and undrstandable interpretation** like:
 
    > “This variant changes the CDKN2A gene and may alter the protein’s behavior. Further clinical analysis may be needed.”
 
