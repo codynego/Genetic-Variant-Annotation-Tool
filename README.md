@@ -80,7 +80,7 @@ pip install -r requirements.txt
 ### Command line:
 
 ```bash
-python annotate_variant.py --chr 9 --pos 136149229 --ref G --alt A
+python annotator.py --chr 9 --pos 136149229 --ref G --alt A
 ```
 
 ### Output:
