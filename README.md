@@ -1,4 +1,3 @@
----
 
 # 🧬 Genetic Variant Annotation Tool
 
