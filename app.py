@@ -5,6 +5,42 @@ from annotator import annotate_variant, read_vcf
 import tempfile
 
 
+def run_annotation(selected_rsid=None):
+    if st.button("🔍 Annotate Variant"):
+        with st.spinner(f"Querying Ensembl VEP for {selected_rsid}..."):
+            result = annotate_variant(selected_rsid)
+
+        if result:
+            st.success("✅ Annotation Retrieved Successfully!")
+            st.subheader("📋 Annotation Summary")
+
+            # Handle response if it's a list
+            if isinstance(result, list) and result:
+                annotation = result[0]
+            else:
+                annotation = result
+
+                    
+
+            # Display relevant keys
+            keys_to_display = [
+                'id', 'assembly_name', 'most_severe_consequence',
+                'transcript_consequences', 'colocated_variants'
+            ]
+            print(annotation.keys())
+            print(annotation["strand"])
+            for key in keys_to_display:
+                if key in annotation:
+                    st.markdown(f"### 🔹 {key.replace('_', ' ').title()}")
+                    st.write(annotation[key])
+            st.markdown("### 🔹 SUMMARY")
+            st.write("this is a sumamry")
+        else:
+            st.error("❌ Failed to retrieve annotation from Ensembl.")
+
+
+
+
 st.set_page_config(page_title="Variant Annotation Tool", layout="wide")
 st.title("🧬 Variant Annotation (VEP - Ensembl)")
 
@@ -14,6 +50,10 @@ Upload a file with variant RSIDs (e.g., from dbSNP or 1000 Genomes), select a ro
 
 # --- File Upload ---
 uploaded_file = st.file_uploader("📁 Upload your VCF file", type=["vcf"])
+rsid = st.text_input(placeholder="e.g rs11577344", label="enter your rsid (optional):")
+
+
+
 
 if uploaded_file:
     # Read VCF using your generator function
@@ -44,35 +84,8 @@ if uploaded_file:
             st.error("❌ No RSID found in the selected row.")
         else:
             # Annotate Button
-            if st.button("🔍 Annotate Variant"):
-                with st.spinner(f"Querying Ensembl VEP for {selected_rsid}..."):
-                    result = annotate_variant(selected_rsid)
-                    print("result", type(result))
-
-                if result:
-                    st.success("✅ Annotation Retrieved Successfully!")
-                    st.subheader("📋 Annotation Summary")
-
-                    # Handle response if it's a list
-                    if isinstance(result, list) and result:
-                        annotation = result[0]
-                    else:
-                        annotation = result
-
-                    
-
-                    # Display relevant keys
-                    keys_to_display = [
-                        'id', 'assembly_name', 'most_severe_consequence',
-                        'transcript_consequences', 'colocated_variants'
-                    ]
-                    print(annotation.keys())
-                    print(annotation["strand"])
-                    for key in keys_to_display:
-                        if key in annotation:
-                            st.markdown(f"### 🔹 {key.replace('_', ' ').title()}")
-                            st.write(annotation[key])
-                else:
-                    st.error("❌ Failed to retrieve annotation from Ensembl.")
+            run_annotation(st, selected_rsid)
+elif rsid:
+    run_annotation(rsid)
 else:
     st.info("📌 Please upload a `.vcf` file to begin.")
