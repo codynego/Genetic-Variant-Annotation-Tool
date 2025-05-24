@@ -1,4 +1,5 @@
 import requests, sys
+from io import StringIO
 
 def read_vcf(path):
     with open(path, 'r') as f:
@@ -32,7 +33,7 @@ def get_rsid(chrom, pos, ref, alt):
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
-    variant = f"{chrom} {"."} {pos} {ref} {alt}"
+    variant = f"{chrom} {pos} {ref} {alt}"
     data = {"variants": [variant]}
     
     response = requests.post(f"{server}{ext}", headers=headers, json=data)
@@ -47,12 +48,29 @@ def get_rsid(chrom, pos, ref, alt):
     else:
         return "rsID not found"
 
-def main ():
-    variant = read_vcf("D13.snp4.1.vcf")
-    for v in variant:
-        #print(v)
-        print(get_rsid(1, v["POS"], v["REF"], v["ALT"]))
-        # print(v["CHROM"], v["POS"], v["ID"], v["REF"], v["ALT"], v["QUAL"], v["FILTER"], v["INFO"])
+def annotate_variant(rsid):
+    server = "https://rest.ensembl.org"
+    ext = f"/vep/human/id/{rsid}?"
+    
+    response = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
+    
+    if not response.ok:
+        print(f"Error: {response.status_code} - {response.text}")
+        return None
+        
+    decoded = response.json()
+    return (decoded)
+
+
+# def main ():
+#     variant = read_vcf("dummy_test.vcf")
+#     for v in variant:
+#     #     print(v)
+#     #     #print(get_rsid(1, v["POS"], v["REF"], v["ALT"]))
+#     #     # print(v["CHROM"], v["POS"], v["ID"], v["REF"], v["ALT"], v["QUAL"], v["FILTER"], v["INFO"])
+
+#     variant = annotate_variant("rs372634384")
+#     print(variant)
 
 if __name__ == "__main__":
     main()
